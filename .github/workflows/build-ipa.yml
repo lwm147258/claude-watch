@@ -93,6 +93,7 @@ jobs:
           mkdir -p "$SHELL_APP/Watch"
           cp -R "$WATCH_APP" "$SHELL_APP/Watch/"
           /usr/libexec/PlistBuddy -c "Delete :WKWatchOnly" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist" || true
+          /usr/libexec/PlistBuddy -c "Set :WKCompanionAppBundleIdentifier com.edgeoftrust.remmy.shell" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :WKCompanionAppBundleIdentifier string com.edgeoftrust.remmy.shell" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist"
           ls -la "$SHELL_APP/Watch/"
 
       - name: Package IPA
