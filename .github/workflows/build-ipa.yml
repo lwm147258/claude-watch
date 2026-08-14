@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 60
     steps:
       - name: Checkout
@@ -16,7 +16,7 @@ jobs:
       - name: Select Xcode 26
         run: |
           ls /Applications | grep -i xcode
-          XCODE_26=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | head -1)
+          XCODE_26=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
           if [ -n "$XCODE_26" ]; then
             sudo xcode-select -s "$XCODE_26"
           fi
