@@ -39,7 +39,7 @@ jobs:
           cat > shell/project.yml <<'EOF'
           name: ShellApp
           options:
-            bundleIdPrefix: com.edgeoftrust
+            bundleIdPrefix: com.aolinger
           targets:
             ShellApp:
               type: application
@@ -49,7 +49,7 @@ jobs:
               info:
                 path: Info.plist
                 properties:
-                  CFBundleIdentifier: com.edgeoftrust.remmy
+                  CFBundleIdentifier: com.aolinger.claudewatch
                   CFBundleDisplayName: Claude Watch
                   UILaunchScreen: {}
           EOF
@@ -93,8 +93,8 @@ jobs:
           mkdir -p "$SHELL_APP/Watch"
           cp -R "$WATCH_APP" "$SHELL_APP/Watch/"
           /usr/libexec/PlistBuddy -c "Delete :WKWatchOnly" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist" || true
-          /usr/libexec/PlistBuddy -c "Set :WKCompanionAppBundleIdentifier com.edgeoftrust.remmy" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :WKCompanionAppBundleIdentifier string com.edgeoftrust.remmy" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist"
-          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.edgeoftrust.remmy.watchkitapp" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :CFBundleIdentifier string com.edgeoftrust.remmy.watchkitapp" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist"
+          /usr/libexec/PlistBuddy -c "Set :WKCompanionAppBundleIdentifier com.aolinger.claudewatch" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :WKCompanionAppBundleIdentifier string com.aolinger.claudewatch" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.aolinger.claudewatch.watchkitapp" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :CFBundleIdentifier string com.aolinger.claudewatch.watchkitapp" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist"
           ls -la "$SHELL_APP/Watch/"
 
       - name: Package IPA
