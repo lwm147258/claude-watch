@@ -13,6 +13,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Select Xcode 26
+        run: |
+          ls /Applications | grep -i xcode
+          XCODE_26=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | head -1)
+          if [ -n "$XCODE_26" ]; then
+            sudo xcode-select -s "$XCODE_26"
+          fi
+          xcodebuild -version
+
       - name: Build watchOS app
         run: |
           xcodebuild -project ClaudeWatch.xcodeproj \
