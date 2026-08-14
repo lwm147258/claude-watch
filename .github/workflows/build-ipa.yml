@@ -49,7 +49,7 @@ jobs:
               info:
                 path: Info.plist
                 properties:
-                  CFBundleIdentifier: com.edgeoftrust.remmy
+                  CFBundleIdentifier: com.edgeoftrust.remmy.shell
                   CFBundleDisplayName: Claude Watch
                   UILaunchScreen: {}
           EOF
@@ -92,6 +92,7 @@ jobs:
           echo "WATCH_APP=$WATCH_APP"
           mkdir -p "$SHELL_APP/Watch"
           cp -R "$WATCH_APP" "$SHELL_APP/Watch/"
+          /usr/libexec/PlistBuddy -c "Delete :WKWatchOnly" "$SHELL_APP/Watch/ClaudeWatch.app/Info.plist" || true
           ls -la "$SHELL_APP/Watch/"
 
       - name: Package IPA
