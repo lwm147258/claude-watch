@@ -28,43 +28,43 @@ jobs:
           brew install xcodegen
           mkdir -p shell/Sources
           cat > shell/project.yml <<'EOF'
-name: ShellApp
-options:
-  bundleIdPrefix: com.edgeoftrust
-targets:
-  ShellApp:
-    type: application
-    platform: iOS
-    deploymentTarget: "15.0"
-    sources: [Sources]
-    info:
-      path: Info.plist
-      properties:
-        CFBundleIdentifier: com.edgeoftrust.remmy
-        CFBundleDisplayName: Claude Watch
-        UILaunchScreen: {}
-EOF
+          name: ShellApp
+          options:
+            bundleIdPrefix: com.edgeoftrust
+          targets:
+            ShellApp:
+              type: application
+              platform: iOS
+              deploymentTarget: "15.0"
+              sources: [Sources]
+              info:
+                path: Info.plist
+                properties:
+                  CFBundleIdentifier: com.edgeoftrust.remmy
+                  CFBundleDisplayName: Claude Watch
+                  UILaunchScreen: {}
+          EOF
           cat > shell/Sources/ShellApp.swift <<'EOF'
-import SwiftUI
-
-@main
-struct ShellApp: App {
-    var body: some Scene {
-        WindowGroup {
-            VStack(spacing: 12) {
-                Image(systemName: "applewatch")
-                    .font(.system(size: 48))
-                Text("Claude Watch")
-                    .font(.headline)
-                Text("Install companion app on your Apple Watch via the Watch app.")
-                    .font(.caption)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-            }
-        }
-    }
-}
-EOF
+          import SwiftUI
+          
+          @main
+          struct ShellApp: App {
+              var body: some Scene {
+                  WindowGroup {
+                      VStack(spacing: 12) {
+                          Image(systemName: "applewatch")
+                              .font(.system(size: 48))
+                          Text("Claude Watch")
+                              .font(.headline)
+                          Text("Install companion app on your Apple Watch via the Watch app.")
+                              .font(.caption)
+                              .multilineTextAlignment(.center)
+                              .padding(.horizontal)
+                      }
+                  }
+              }
+          }
+          EOF
           cd shell && xcodegen generate
 
       - name: Build iOS shell and embed watch app
