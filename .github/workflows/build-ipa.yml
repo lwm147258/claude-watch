@@ -1,0 +1,101 @@
+name: Build Claude Watch IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build watchOS app
+        run: |
+          xcodebuild -project ClaudeWatch.xcodeproj \
+            -scheme ClaudeWatch \
+            -configuration Release \
+            -destination 'generic/platform=watchOS' \
+            -derivedDataPath Build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Create iOS shell project
+        run: |
+          brew install xcodegen
+          mkdir -p shell/Sources
+          cat > shell/project.yml <<'EOF'
+name: ShellApp
+options:
+  bundleIdPrefix: com.edgeoftrust
+targets:
+  ShellApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources: [Sources]
+    info:
+      path: Info.plist
+      properties:
+        CFBundleIdentifier: com.edgeoftrust.remmy
+        CFBundleDisplayName: Claude Watch
+        UILaunchScreen: {}
+EOF
+          cat > shell/Sources/ShellApp.swift <<'EOF'
+import SwiftUI
+
+@main
+struct ShellApp: App {
+    var body: some Scene {
+        WindowGroup {
+            VStack(spacing: 12) {
+                Image(systemName: "applewatch")
+                    .font(.system(size: 48))
+                Text("Claude Watch")
+                    .font(.headline)
+                Text("Install companion app on your Apple Watch via the Watch app.")
+                    .font(.caption)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
+        }
+    }
+}
+EOF
+          cd shell && xcodegen generate
+
+      - name: Build iOS shell and embed watch app
+        run: |
+          cd shell
+          xcodebuild -project ShellApp.xcodeproj \
+            -scheme ShellApp \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath Build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+          SHELL_APP=$(find Build -name "ShellApp.app" -type d | head -1)
+          WATCH_APP=$(find ../Build -name "ClaudeWatch.app" -type d | head -1)
+          echo "SHELL_APP=$SHELL_APP"
+          echo "WATCH_APP=$WATCH_APP"
+          mkdir -p "$SHELL_APP/Watch"
+          cp -R "$WATCH_APP" "$SHELL_APP/Watch/"
+          ls -la "$SHELL_APP/Watch/"
+
+      - name: Package IPA
+        run: |
+          mkdir -p dist/Payload
+          SHELL_APP=$(find shell/Build -name "ShellApp.app" -type d | head -1)
+          cp -R "$SHELL_APP" dist/Payload/
+          cd dist && zip -qry ../ClaudeWatch.ipa Payload
+          cd ..
+          ls -la ClaudeWatch.ipa
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClaudeWatch-ipa
+          path: ClaudeWatch.ipa
